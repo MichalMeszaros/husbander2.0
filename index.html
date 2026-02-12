@@ -1,48 +1,388 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Husbander - GitHub Pages</title>
+    <title>Husbander 4.0 - Ultimate Valentine</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+        :root {
+            --primary: #fe3c72;
+            --primary-dark: #e63565;
+            --bg-color: #f0f2f5;
+            --white: #ffffff;
+            --text: #333;
+        }
+
+        * { box-sizing: border-box; }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            height: 100%; display: flex;
+            justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        /* Hlavný obal appky */
+        .app-container {
+            width: 400px;
+            max-width: 450px; /* Mierne širšie pre lepší feeling */
+            height: 95vh;
+            max-height: 800px;
+            background: var(--white);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Horná lišta */
+        .header {
             padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-        }
-        p {
-            color: #666;
-            line-height: 1.6;
-        }
-        .footer {
-            margin-top: 30px;
             text-align: center;
-            color: #999;
-            font-size: 14px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            border-bottom: 1px solid #f2f2f2;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
+
+        /* Priestor pre karty */
+        .card-container {
+            flex: 1;
+            position: relative;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Karta */
+        .card {
+            position: absolute;
+            width: 95%;
+            height: 100%;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+        }
+
+        /* Fotka */
+        .photo-area {
+            width: 100%;
+            height: 60%; /* Fixná časť pre fotku */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Čiarky hore (ako Instagram) */
+        .photo-indices {
+            position: absolute;
+            top: 10px; left: 10px; right: 10px;
+            display: flex; gap: 5px;
+            z-index: 5;
+        }
+        .index-bar {
+            height: 4px; flex: 1;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+        .index-bar.active { background: white; }
+
+        /* Text pod fotkou */
+        .card-info {
+            padding: 20px;
+            overflow-y: auto; /* Scroll ak je text dlhý */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-info h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: var(--text);
+        }
+
+        .card-info p {
+            margin: 10px 0 0;
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        /* Tlačidlá */
+        .actions {
+            padding: 20px 0 30px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            width: 75px; height: 75px;
+            border-radius: 50%;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn:active { transform: scale(0.8); }
+        .btn-nope { color: #ff4444; border: 2px solid #ff4444; }
+        .btn-like { color: #2fd4a1; border: 2px solid #2fd4a1; }
+
+        /* MODAL - RESPONSIVE & WIDER */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            width: 90%; /* Zaberá 90% šírky kontajnera */
+            max-width: 360px;
+            padding: 30px 20px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+        }
+
+        .modal p {
+            color: #444;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            margin-bottom: 25px;
+        }
+
+        .modal-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(254, 60, 114, 0.3);
+        }
+
+        /* Finálna obrazovka */
+        .match-screen {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #fe3c72 0%, #ff7854 100%);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            z-index: 2000;
+            padding: 40px;
+        }
+
+        .match-screen.active { display: flex; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-12px); }
+            40% { transform: translateX(12px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to Husbander GitHub Pages</h1>
-        <p>This is a base HTML page for testing GitHub Pages.</p>
-        <p>Your GitHub Pages site is now live and working correctly!</p>
-        <div class="footer">
-            <p>Created by Valentin</p>
+
+    <div class="app-container">
+        <div class="header">
+            <span>🔥</span> Husbander
+        </div>
+        
+        <div class="card-container" id="card-stack">
+            </div>
+
+        <div class="actions">
+            <button class="btn btn-nope" id="nopeBtn">✖️</button>
+            <button class="btn btn-like" id="likeBtn">❤️</button>
+        </div>
+
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modalBox">
+                <h3>Ojojoj! 🛑</h3>
+                <p id="modalMsg">Toto tlačidlo je len dekorácia. Skús radšej to srdiečko!</p>
+                <button class="modal-btn" onclick="closeModal()">Rozumiem, si úžasný</button>
+            </div>
+        </div>
+
+        <div class="match-screen" id="matchScreen">
+            <h1 style="font-size: 3.5rem; margin: 0;">It's a Match!</h1>
+            <p style="font-size: 1.4rem; margin-top: 20px; font-weight: 300;">
+                Vedel som, že ma "swipe-neš" doprava. <br><br>
+                <b>Milujem ťa!</b>
+            </p>
+            <div style="font-size: 50px; margin-top: 20px;">🌹</div>
         </div>
     </div>
+
+    <script>
+        const profiles = [
+            {
+                name: 'Tvoj Manžel, 30',
+                bio: 'Tento unikátny exemplár je vybavený funkciou "vynášanie smetí" (vyžaduje pravidelné aktualizácie softvéru) a dokáže vyprodukovať až 10 vtipov za hodinu, z ktorých aspoň jeden je naozaj vtipný.',
+                photos: ['https://via.placeholder.com/450x600?text=TVOJA+FOTO+1', 'https://via.placeholder.com/450x600?text=FOTO+2']
+            },
+            {
+                name: 'Profesionálny Objímač, 30',
+                bio: 'Hľadám niekoho, kto ma bude škrabkať na chrbte výmenou za doživotnú vernosť a pravidelné dopĺňanie zásob čokolády. Som veľmi skladný, zmestím sa na akýkoľvek gauč.',
+                photos: ['https://via.placeholder.com/450x600?text=ROMANTICKA+FOTO']
+            },
+            {
+                name: 'Kulinársky Experimentátor, 30',
+                bio: 'Moje špeciality zahŕňajú: čaj, hrianky a objednávanie z donáškových služieb tak rýchlo, že kuriér príde skôr, než stihneš povedať "hlad".',
+                photos: ['https://via.placeholder.com/450x600?text=JA+AKO+KUCHAR']
+            },
+            {
+                name: 'Tvoj Osobný IT Support, 30',
+                bio: 'Nefunguje Wi-Fi? Heslo na Netflix? Práčka vydáva divné zvuky? Stačí zavolať a ja... pravdepodobne vypnem a znova zapnem poistky. Ale budem pri tom vyzerať odborne.',
+                photos: ['https://via.placeholder.com/450x600?text=JA+A+POCITAC']
+            }
+        ];
+
+        const nopeMessages = [
+            "Pekný pokus! Ale dnes je Valentín, X-ko je zakázané.",
+            "Detekoval som chybu v tvojom prste. Skús to o 2 centimetre doprava.",
+            "Toto tlačidlo slúži len na testovanie tvojej trpezlivosti. Testom si neprešla!",
+            "Ups! Vyzerá to, že tvoj vkus je momentálne nedostupný. Skús srdiečko.",
+            "Naozaj si chcela kliknúť toto? Dobre si to rozmysli... dnes varím ja!"
+        ];
+
+        let currentProfileIdx = 0;
+        let currentPhotoIdx = 0;
+
+        function renderCard() {
+            const stack = document.getElementById('card-stack');
+            if (currentProfileIdx >= profiles.length) {
+                document.getElementById('matchScreen').classList.add('active');
+                return;
+            }
+
+            const p = profiles[currentProfileIdx];
+            currentPhotoIdx = 0;
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.id = 'activeCard';
+
+            let bars = '';
+            for(let i=0; i < (p.photos.length || 1); i++) {
+                bars += `<div class="index-bar ${i===0?'active':''}" id="bar-${i}"></div>`;
+            }
+
+            card.innerHTML = `
+                <div class="photo-area" id="photoArea" style="background-image: url('${p.photos[0]}')">
+                    <div class="photo-indices">${bars}</div>
+                </div>
+                <div class="card-info">
+                    <h2>${p.name}</h2>
+                    <p>${p.bio}</p>
+                </div>
+            `;
+
+            stack.innerHTML = '';
+            stack.appendChild(card);
+
+            document.getElementById('photoArea').onclick = (e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                changePhoto(x < rect.width / 2 ? -1 : 1);
+            };
+        }
+
+        function changePhoto(dir) {
+            const p = profiles[currentProfileIdx];
+            currentPhotoIdx += dir;
+            if (currentPhotoIdx < 0) currentPhotoIdx = 0;
+            if (currentPhotoIdx >= p.photos.length) currentPhotoIdx = p.photos.length - 1;
+
+            document.getElementById('photoArea').style.backgroundImage = `url('${p.photos[currentPhotoIdx]}')`;
+            document.querySelectorAll('.index-bar').forEach((b, i) => b.classList.toggle('active', i === currentPhotoIdx));
+        }
+
+        document.getElementById('likeBtn').onclick = () => {
+            const card = document.getElementById('activeCard');
+            if (!card) return;
+            card.style.transform = 'translateX(250%) rotate(30deg)';
+            card.style.opacity = '0';
+            setTimeout(() => { currentProfileIdx++; renderCard(); }, 400);
+        };
+
+        document.getElementById('nopeBtn').onclick = () => {
+            const btn = document.getElementById('nopeBtn');
+            btn.classList.add('shake');
+            setTimeout(() => btn.classList.remove('shake'), 400);
+            
+            const msg = nopeMessages[Math.floor(Math.random() * nopeMessages.length)];
+            document.getElementById('modalMsg').innerText = msg;
+            
+            const overlay = document.getElementById('modalOverlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => document.getElementById('modalBox').classList.add('active'), 10);
+        };
+
+        window.closeModal = () => {
+            const modal = document.getElementById('modalBox');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('modalOverlay').style.display = 'none';
+            }, 300);
+        };
+
+        renderCard();
+    </script>
 </body>
 </html>
