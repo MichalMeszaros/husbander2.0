@@ -39,6 +39,76 @@
             overflow: hidden;
         }
 
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            body, html {
+                background-color: var(--white);
+            }
+            
+            .app-container {
+                width: 100%;
+                max-width: 100%;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 15px;
+                font-size: 1.3rem;
+            }
+
+            .card-container {
+                padding: 10px;
+            }
+
+            .card {
+                width: 98%;
+            }
+
+            .card-info h2 {
+                font-size: 1.4rem;
+            }
+
+            .card-info p {
+                font-size: 0.95rem;
+            }
+
+            .actions {
+                padding: 15px 0 25px;
+                gap: 20px;
+            }
+
+            .btn {
+                width: 65px;
+                height: 65px;
+                font-size: 26px;
+            }
+
+            .modal {
+                width: 85%;
+                max-width: 320px;
+                padding: 25px 18px;
+            }
+
+            .modal h3 {
+                font-size: 1.4rem;
+            }
+
+            .modal p {
+                font-size: 1rem;
+            }
+
+            .match-screen h1 {
+                font-size: 2.5rem !important;
+            }
+
+            .match-screen p {
+                font-size: 1.2rem !important;
+            }
+        }
+
         /* Horná lišta */
         .header {
             padding: 20px;
@@ -83,25 +153,15 @@
         .photo-area {
             width: 100%;
             height: 60%; /* Fixná časť pre fotku */
-            background-size: cover;
+            background-size: contain;
             background-position: center;
+            background-repeat: no-repeat;
+            background-color: #f8f8f8;
             position: relative;
             flex-shrink: 0;
         }
 
-        /* Čiarky hore (ako Instagram) */
-        .photo-indices {
-            position: absolute;
-            top: 10px; left: 10px; right: 10px;
-            display: flex; gap: 5px;
-            z-index: 5;
-        }
-        .index-bar {
-            height: 4px; flex: 1;
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-        }
-        .index-bar.active { background: white; }
+
 
         /* Text pod fotkou */
         .card-info {
@@ -274,22 +334,22 @@
             {
                 name: 'Tvoj Manžel, 30',
                 bio: 'Tento unikátny exemplár je vybavený funkciou "vynášanie smetí" (vyžaduje pravidelné aktualizácie softvéru) a dokáže vyprodukovať až 10 vtipov za hodinu, z ktorých aspoň jeden je naozaj vtipný.',
-                photos: ['https://via.placeholder.com/450x600?text=TVOJA+FOTO+1', 'https://via.placeholder.com/450x600?text=FOTO+2']
+                photos: ['./photos/1.png']
             },
             {
                 name: 'Profesionálny Objímač, 30',
                 bio: 'Hľadám niekoho, kto ma bude škrabkať na chrbte výmenou za doživotnú vernosť a pravidelné dopĺňanie zásob čokolády. Som veľmi skladný, zmestím sa na akýkoľvek gauč.',
-                photos: ['https://via.placeholder.com/450x600?text=ROMANTICKA+FOTO']
+                photos: ['./photos/2.png']
             },
             {
                 name: 'Kulinársky Experimentátor, 30',
                 bio: 'Moje špeciality zahŕňajú: čaj, hrianky a objednávanie z donáškových služieb tak rýchlo, že kuriér príde skôr, než stihneš povedať "hlad".',
-                photos: ['https://via.placeholder.com/450x600?text=JA+AKO+KUCHAR']
+                photos: ['./photos/3.png']
             },
             {
                 name: 'Tvoj Osobný IT Support, 30',
                 bio: 'Nefunguje Wi-Fi? Heslo na Netflix? Práčka vydáva divné zvuky? Stačí zavolať a ja... pravdepodobne vypnem a znova zapnem poistky. Ale budem pri tom vyzerať odborne.',
-                photos: ['https://via.placeholder.com/450x600?text=JA+A+POCITAC']
+                photos: ['./photos/4.png']
             }
         ];
 
@@ -318,14 +378,8 @@
             card.className = 'card';
             card.id = 'activeCard';
 
-            let bars = '';
-            for(let i=0; i < (p.photos.length || 1); i++) {
-                bars += `<div class="index-bar ${i===0?'active':''}" id="bar-${i}"></div>`;
-            }
-
             card.innerHTML = `
                 <div class="photo-area" id="photoArea" style="background-image: url('${p.photos[0]}')">
-                    <div class="photo-indices">${bars}</div>
                 </div>
                 <div class="card-info">
                     <h2>${p.name}</h2>
