@@ -26,8 +26,8 @@
 
         /* Hlavný obal appky */
         .app-container {
-            width: 400px;
-            max-width: 450px; /* Mierne širšie pre lepší feeling */
+            width: 500px;
+            max-width: 550px; /* Mierne širšie pre lepší feeling */
             height: 95vh;
             max-height: 800px;
             background: var(--white);
@@ -46,8 +46,6 @@
             }
             
             .app-container {
-                width: 100%;
-                max-width: 100%;
                 height: 100vh;
                 max-height: 100vh;
                 border-radius: 0;
@@ -165,7 +163,7 @@
 
         /* Text pod fotkou */
         .card-info {
-            padding: 20px;
+            padding: 20px 20px 0;
             overflow-y: auto; /* Scroll ak je text dlhý */
             flex-grow: 1;
             display: flex;
@@ -179,7 +177,7 @@
         }
 
         .card-info p {
-            margin: 10px 0 0;
+            margin: 0;
             color: #666;
             font-size: 1.05rem;
             line-height: 1.5;
